@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: DragonKing
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  datasource:
+    url: "jdbc:mysql://localhost:3306/dragon_king"
+    username: "king_d"
+    password: "dragon1223"
