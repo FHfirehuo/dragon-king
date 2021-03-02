@@ -56,6 +56,6 @@ public class RequestMappingInfo {
         }
 
 
-        DragonKingClient.getInstance().reportAppInterfaceMateInfo(list);
+        DragonKingClient.getInstance().reportAppInterfaceMateInfo(AppType.WEB ,list);
     }
 }

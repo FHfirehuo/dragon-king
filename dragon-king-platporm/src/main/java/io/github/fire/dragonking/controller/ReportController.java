@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
@@ -17,12 +18,12 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    @PostMapping(value = "{appName}/appInterfaceInfos", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void serviceInterfaceInfos(@PathVariable("appName") String appName, @RequestBody List<AppInterfaceInfo> serviceInterfaceInfos) {
+    @PostMapping(value = "{appName}/{appType}/appInterfaceInfos", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void serviceInterfaceInfos(HttpServletRequest request, @PathVariable("appName") String appName, @PathVariable("appType") String appType, @RequestBody List<AppInterfaceInfo> serviceInterfaceInfos) {
 
-        log.info("serviceInterfaceInfos  received {}  info {}",  appName, serviceInterfaceInfos);
-
-        reportService.reportServiceInterfaceInfos(appName, serviceInterfaceInfos);
+        String remoteAddr = request.getRemoteAddr();
+        System.out.println(remoteAddr);
+        reportService.reportServiceInterfaceInfos(appName, appType, remoteAddr, serviceInterfaceInfos);
 
     }
 

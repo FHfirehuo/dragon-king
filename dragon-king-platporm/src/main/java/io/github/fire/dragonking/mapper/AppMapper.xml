@@ -1,0 +1,33 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.github.fire.dragonking.mapper.AppMapper">
+
+    <resultMap id="appMap" type="io.github.fire.dragonking.domain.App">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+    </resultMap>
+
+    <select id="getAllApp" resultMap="appMap">
+        select id, name from app
+    </select>
+
+    <insert id="add" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+        insert into app (name, created_time) value (#{name}, now())
+    </insert>
+
+    <insert id="addNewInterface">
+        insert into app_interface (app_id, class_name, type, uri, request_method, method, lasted_register_time)
+        values (#{appId}, #{info.className}, #{interfaceType}, #{info.url}, #{info.requestMethod}, #{info.method}, now())
+    </insert>
+
+    <select id="haveInterface" resultType="Long">
+        select id from app_interface where app_id = #{appId} and class_name = #{info.className}
+    </select>
+
+    <update id="update">
+        update app_interface set lasted_register_time = now() where id = #{id}
+    </update>
+
+</mapper>

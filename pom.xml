@@ -11,6 +11,8 @@
         <module>dragon-king-springmvc</module>
         <module>dragon-king-springboot-starter</module>
         <module>dragon-king-platporm</module>
+        <module>dragon-king-job</module>
+        <module>dragon-king-flink</module>
     </modules>
     <name>dragon-king</name>
     <description>流量监控平台</description>
@@ -128,15 +130,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-        </dependency>
 
 
         <dependency>
@@ -155,11 +148,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-stream-binder-kafka-streams</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-        </dependency>
-
 
 
 

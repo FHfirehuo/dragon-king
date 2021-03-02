@@ -1,5 +1,6 @@
 package io.github.fire.dragonking;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Consts;
 import org.apache.http.HttpHeaders;
@@ -11,6 +12,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,6 +22,8 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DragonKingClient {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(DragonKingClient.class);
 
 
     private static volatile DragonKingClient client;
@@ -57,18 +62,19 @@ public class DragonKingClient {
     }
 
 
-    public void reportAppInterfaceMateInfo(List<AppInterfaceInfo> appInterfaceInfos) {
+    public void reportAppInterfaceMateInfo(AppType appType, List<AppInterfaceInfo> appInterfaceInfos) {
 
         CloseableHttpResponse response = null;
         try {
             CloseableHttpClient httpclient = HttpClients.createDefault();
-            HttpPost httpPost = new HttpPost(serverUrl + "/report/" + applicationName + "/appInterfaceInfos/");
+            HttpPost httpPost = new HttpPost(serverUrl + "/report/" + applicationName + "/" + appType.getValue() + "/appInterfaceInfos/");
             ObjectMapper objectMapper = new ObjectMapper();
             httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             httpPost.setHeader(HttpHeaders.CONTENT_ENCODING, Consts.UTF_8.toString());
             httpPost.setEntity(new StringEntity(objectMapper.writeValueAsString(appInterfaceInfos)));
             response = httpclient.execute(httpPost);
-            System.out.println("response: " + response.getStatusLine());
+
+            LOGGER.debug("response: " + response.getStatusLine());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -80,9 +86,15 @@ public class DragonKingClient {
         }
     }
 
-    public void reportAppInterfaceTransferInfo(AppInterfaceInfo appInterfaceInfo) {
-        if (enable.get()) {
-            Kafka.PRODUCER.send(new ProducerRecord<String, String>("reportAppInterfaceTransferInfo", Integer.toString(1), Integer.toString(1)));
+    public void reportAppInterfaceTransferInfo(AppInterfaceTransferInfo appInterfaceTransferInfo) {
+        try {
+            if (enable.get()) {
+                LOGGER.debug("reportAppInterfaceTransferInfo: {}", appInterfaceTransferInfo);
+                ObjectMapper objectMapper = new ObjectMapper();
+                Kafka.PRODUCER.send(new ProducerRecord<>("appInterfaceTransferInfo", applicationName, objectMapper.writeValueAsString(appInterfaceTransferInfo)));
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -110,6 +122,8 @@ public class DragonKingClient {
             props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
             PRODUCER = new KafkaProducer<>(props);
         }
+
+
     }
 
 }

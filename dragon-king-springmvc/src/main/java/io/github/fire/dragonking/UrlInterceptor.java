@@ -21,6 +21,11 @@ public class UrlInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 
+        if (!(handler instanceof HandlerMethod)) {
+            return;
+        }
+//      org.springframework.web.method.HandlerMethod;
+        //ResourceHttpRequestHandler
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
         if (!handlerMethod.hasMethodAnnotation(RequestMapping.class)) {
@@ -44,7 +49,7 @@ public class UrlInterceptor implements HandlerInterceptor {
 
         String uri = "/" + classAnnotationFirstPath + "/" + methodAnnotationFirstValues;
 
-        AppInterfaceInfo interfaceInfo = new AppInterfaceInfo();
+        AppInterfaceTransferInfo interfaceInfo = new AppInterfaceTransferInfo();
         interfaceInfo.setUrl(uri.replaceAll("//", "/"));
         interfaceInfo.setClassName(handlerMethod.getBeanType().getName());
         interfaceInfo.setMethod(handlerMethod.getMethod().getName());
@@ -54,6 +59,9 @@ public class UrlInterceptor implements HandlerInterceptor {
         interfaceInfo.setOutMethodTime(System.currentTimeMillis());
 
         interfaceInfo.setRequestStatus(response.getStatus());
+        interfaceInfo.setRemoteHost(request.getRemoteAddr());
+        interfaceInfo.setAppType(AppType.WEB);
+
         DragonKingClient.getInstance().reportAppInterfaceTransferInfo(interfaceInfo);
 
     }
