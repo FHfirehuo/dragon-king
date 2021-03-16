@@ -7,11 +7,22 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class UrlInterceptor implements HandlerInterceptor {
 
     private final String ENTRY_METHOD_TIME = "entryMethodTime";
 
+    private static String localHost;
+
+    static {
+        try {
+            localHost = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         request.setAttribute(ENTRY_METHOD_TIME, System.currentTimeMillis());
@@ -24,7 +35,7 @@ public class UrlInterceptor implements HandlerInterceptor {
         if (!(handler instanceof HandlerMethod)) {
             return;
         }
-//      org.springframework.web.method.HandlerMethod;
+
         //ResourceHttpRequestHandler
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
@@ -50,17 +61,17 @@ public class UrlInterceptor implements HandlerInterceptor {
         String uri = "/" + classAnnotationFirstPath + "/" + methodAnnotationFirstValues;
 
         AppInterfaceTransferInfo interfaceInfo = new AppInterfaceTransferInfo();
-        interfaceInfo.setUrl(uri.replaceAll("//", "/"));
+        interfaceInfo.setUri(uri.replaceAll("//", "/"));
         interfaceInfo.setClassName(handlerMethod.getBeanType().getName());
         interfaceInfo.setMethod(handlerMethod.getMethod().getName());
         interfaceInfo.setRequestMethod(request.getMethod());
 
         interfaceInfo.setEntryMethodTime((Long) request.getAttribute(ENTRY_METHOD_TIME));
         interfaceInfo.setOutMethodTime(System.currentTimeMillis());
-
         interfaceInfo.setRequestStatus(response.getStatus());
-        interfaceInfo.setRemoteHost(request.getRemoteAddr());
+        interfaceInfo.setRemoteAddr(request.getRemoteAddr());
         interfaceInfo.setAppType(AppType.WEB);
+        interfaceInfo.setReceiveHost(localHost);
 
         DragonKingClient.getInstance().reportAppInterfaceTransferInfo(interfaceInfo);
 

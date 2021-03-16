@@ -1,0 +1,12 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.github.fire.dragonking.job.mapper.LogMapper">
+
+
+    <insert id="insert">
+        INSERT INTO dragon_king.log (appName, appType, entryMethodTime, outMethodTime, requestStatus, remoteAddr, receiveHost, uri, className, method, requestMethod, consumingTime)
+        VALUES ( #{appName}, #{appInterfaceInfo.appType}, #{appInterfaceInfo.entryMethodTime}, #{appInterfaceInfo.outMethodTime}, #{appInterfaceInfo.requestStatus}, #{appInterfaceInfo.remoteAddr}, #{appInterfaceInfo.receiveHost}, #{appInterfaceInfo.uri}, #{appInterfaceInfo.className}, #{appInterfaceInfo.method}, #{appInterfaceInfo.requestMethod}, #{consumingTime} )
+    </insert>
+</mapper>

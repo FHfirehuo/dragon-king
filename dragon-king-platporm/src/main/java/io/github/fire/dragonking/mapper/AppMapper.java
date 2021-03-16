@@ -15,9 +15,13 @@ public interface AppMapper {
 
     void add(App server);
 
-    Long haveInterface(@Param("appId") int appId, @Param("info") AppInterfaceInfo serviceInterfaceInfo);
+    Long getInterface(@Param("appId") int appId, @Param("info") AppInterfaceInfo info);
 
     void addNewInterface(@Param("appId") int appId, @Param("interfaceType") String interfaceType, @Param("info") AppInterfaceInfo serviceInterfaceInfo);
 
     void update(long id);
+
+    Long getWebInterface(@Param("appId") int appId, @Param("info") AppInterfaceInfo info);
+
+    int getIdByName(String appName);
 }

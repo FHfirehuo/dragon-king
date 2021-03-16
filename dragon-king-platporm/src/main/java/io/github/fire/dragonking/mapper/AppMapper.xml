@@ -19,11 +19,30 @@
 
     <insert id="addNewInterface">
         insert into app_interface (app_id, class_name, type, uri, request_method, method, lasted_register_time)
-        values (#{appId}, #{info.className}, #{interfaceType}, #{info.url}, #{info.requestMethod}, #{info.method}, now())
+        values (#{appId}, #{info.className}, #{interfaceType}, #{info.uri}, #{info.requestMethod}, #{info.method}, now())
     </insert>
 
-    <select id="haveInterface" resultType="Long">
-        select id from app_interface where app_id = #{appId} and class_name = #{info.className}
+    <select id="getInterface" resultType="Long">
+        SELECT id
+        FROM app_interface
+        WHERE app_id = #{appId}
+        AND class_name = #{info.className}
+        AND type = "rpc"
+        AND method = #{info.method}
+    </select>
+
+    <select id="getWebInterface" resultType="java.lang.Long">
+        SELECT id
+        FROM app_interface
+        WHERE app_id = #{appId}
+        AND type = "web"
+        AND uri = #{info.uri}
+    </select>
+
+    <select id="getIdByName" resultType="java.lang.Integer">
+        select id
+        from app
+        where name = #{appName}
     </select>
 
     <update id="update">

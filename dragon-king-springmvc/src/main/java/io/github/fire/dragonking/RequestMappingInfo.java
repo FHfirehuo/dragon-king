@@ -42,7 +42,7 @@ public class RequestMappingInfo {
             HandlerMethod method = m.getValue();
             PatternsRequestCondition p = info.getPatternsCondition();
             for (String url : p.getPatterns()) {
-                interfaceInfo.setUrl(url);
+                interfaceInfo.setUri(url);
             }
             interfaceInfo.setClassName(method.getMethod().getDeclaringClass().getName()); // 类名
             interfaceInfo.setMethod(method.getMethod().getName());// 方法名

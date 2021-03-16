@@ -8,21 +8,21 @@ import lombok.Setter;
 public class AppInterfaceInfo {
 
 
-    private String url = "";
+    private String uri = "";
     private String className;
     private String method;
     private String requestMethod = "";
 
     public void setRequestMethod(String requestMethod) {
-        if (requestMethod != null){
+        if (requestMethod != null) {
             this.requestMethod = requestMethod;
         }
 
     }
 
-    public void setUrl(String url) {
-        if (url != null){
-            this.url = url;
+    public void setUri(String uri) {
+        if (uri != null) {
+            this.uri = uri;
         }
     }
 }

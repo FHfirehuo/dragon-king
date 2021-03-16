@@ -7,12 +7,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class AppInterfaceTransferInfo extends AppInterfaceInfo{
+public class AppInterfaceTransferInfo extends AppInterfaceInfo {
 
     private AppType appType;
     private long entryMethodTime;
     private long outMethodTime;
     private int requestStatus;
-    //    private String applicationName;
-    private String remoteHost;
+    private String remoteAddr;
+    private String receiveHost;
 }

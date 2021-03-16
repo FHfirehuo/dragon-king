@@ -11,7 +11,6 @@ public class StartedListener implements ApplicationListener<ApplicationStartedEv
 
         ApplicationContext applicationContext = applicationStartedEvent.getApplicationContext();
         ReportService reportService = applicationContext.getBean(ReportService.class);
-        reportService.initServerMap();
 
     }
 }

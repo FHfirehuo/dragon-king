@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -75,13 +76,14 @@ public class DragonKingClient {
             response = httpclient.execute(httpPost);
 
             LOGGER.debug("response: " + response.getStatusLine());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.error("dagonKing 服务连接失败");
         } finally {
             try {
-                Objects.requireNonNull(response).close();
+                if(response!= null){
+                    response.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

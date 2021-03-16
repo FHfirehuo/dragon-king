@@ -4,13 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.fire.dragonking.AppInterfaceTransferInfo;
 import io.github.fire.dragonking.AppType;
+import io.github.fire.dragonking.job.mapper.LogMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
@@ -18,7 +19,10 @@ import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class KafKaConsumeRunner {
+
+    private final LogMapper logMapper;
 
     public void start() {
 
@@ -47,30 +51,26 @@ public class KafKaConsumeRunner {
         System.exit(0);
     }
 
-    static void createRequestVolumeStatisticsStream(final StreamsBuilder builder) {
+    public void createRequestVolumeStatisticsStream(final StreamsBuilder builder) {
         final KStream<String, String> source = builder.stream(INPUT_TOPIC);
         source.foreach((appName, value) -> {
-//            String applicationName =  appInterfaceInfo.getApplicationName();
             AppInterfaceTransferInfo appInterfaceInfo = null;
             try {
                 appInterfaceInfo = new ObjectMapper().readValue(value, AppInterfaceTransferInfo.class);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
+                return;
             }
-            String remoteHost = appInterfaceInfo.getRemoteHost();
+            String remoteAddr = appInterfaceInfo.getRemoteAddr();
             long entryMethodTime = appInterfaceInfo.getEntryMethodTime();
             long outMethodTime = appInterfaceInfo.getOutMethodTime();
             appInterfaceInfo.getRequestStatus();
             String method = appInterfaceInfo.getClassName() + "#" + appInterfaceInfo.getMethod();
-            String url =  appInterfaceInfo.getUrl();
-
-
-            long consumingTime = outMethodTime - entryMethodTime;
-            long time = entryMethodTime/1000; //转换成秒
-
-
-            log.info("{} 在 {} 请求了 {} 的 {} , 耗时 {} ms" , remoteHost, time, appInterfaceInfo.getAppType().equals(AppType.WEB) ? url : method, url, consumingTime);
-
+            String uri = appInterfaceInfo.getUri();
+            long consumingTime = outMethodTime - entryMethodTime; // 耗时
+            appInterfaceInfo.setEntryMethodTime(entryMethodTime/1000);
+            log.info("{} 在 {} 请求了 {} 的 {} , 耗时 {} ms, 状态为 {}", remoteAddr, consumingTime, appName, appInterfaceInfo.getAppType().equals(AppType.WEB) ? uri : method, consumingTime, appInterfaceInfo.getRequestStatus());
+            logMapper.insert(appName, appInterfaceInfo, consumingTime);
         });
 
     }

@@ -1,3 +1,6 @@
+server:
+  port: 8082
+
 spring:
   application:
     name: DragonKing
@@ -5,6 +8,11 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   datasource:
-    url: "jdbc:mysql://localhost:3306/dragon_king"
-    username: "king_d"
-    password: "dragon1223"
+    url: "jdbc:clickhouse://192.168.93.2:8123,192.168.93.2:8123/tutorial"
+    username: "default"
+    password: ""
+    driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+
+
+mybatis:
+  mapperLocations: classpath:*.xml
